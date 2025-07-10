@@ -24,8 +24,6 @@ public struct SwiftUICalendar: View {
     let dateSelectionColor:Color
     let weekDaysFont:Font
     let dateFont:Font
-    let monthYearPickerFont:Font
-    let confirmBtnFont:Font
     let dateTxtColor:Color
     var backgroundColor:Color = .clear
     let previousMonthDateColor:Color
@@ -45,8 +43,6 @@ public struct SwiftUICalendar: View {
         dateSelectionColor: Color,
         weekDaysFont: Font,
         dateFont: Font,
-        monthYearPickerFont:Font,
-        confirmBtnFont:Font,
         dateTxtColor: Color,
         backgroundColor: Color = .clear,
         previousMonthDateColor: Color,
@@ -61,8 +57,6 @@ public struct SwiftUICalendar: View {
         self.dateSelectionColor = dateSelectionColor
         self.weekDaysFont = weekDaysFont
         self.dateFont = dateFont
-        self.monthYearPickerFont = monthYearPickerFont
-        self.confirmBtnFont = confirmBtnFont
         self.dateTxtColor = dateTxtColor
         self.backgroundColor = backgroundColor
         self.previousMonthDateColor = previousMonthDateColor
@@ -110,7 +104,8 @@ public struct SwiftUICalendar: View {
                     }
                 }
             }else{
-                MonthYearDisplay(date: $date, onConfirmation: {}, confirmBtnFont: confirmBtnFont, monthFont: monthYearPickerFont, yearFont: monthYearPickerFont,backgroundColor:backgroundColor, tint: weekDaysColor)
+                EmptyView()
+//                MonthYearDisplay(date: $date, onConfirmation: {}, confirmBtnFont: confirmBtnFont, monthFont: monthYearPickerFont, yearFont: monthYearPickerFont,backgroundColor:backgroundColor, tint: weekDaysColor)
             }
         }
         .onAppear{
