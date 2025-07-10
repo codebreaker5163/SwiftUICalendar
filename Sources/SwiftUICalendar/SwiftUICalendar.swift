@@ -131,19 +131,19 @@ public struct SwiftUICalendar: View {
          }
     }
     
-    private func getMaxDate()->Date{
+    private func getMaxDate() -> Date {
         var components = DateComponents()
-            components.year = maxYear
-        components.month = Calendar.current.component(.month, from: date)
-        components.day = Calendar.current.component(.day, from: date)
+        components.year = maxYear
+        components.month = 12
+        components.day = 31
         return Calendar.current.date(from: components) ?? Date.now
     }
     
     private func getMinDate()->Date{
         var components = DateComponents()
             components.year = minYear
-        components.month = Calendar.current.component(.month, from: date)
-        components.day = Calendar.current.component(.day, from: date)
+        components.month = 1
+        components.day = 1
         return Calendar.current.date(from: components) ?? Date.now
     }
     
