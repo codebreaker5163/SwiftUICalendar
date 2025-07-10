@@ -1,6 +1,10 @@
 
 
 
+https://github.com/user-attachments/assets/9688da19-70a8-4166-ad7c-56f858d0c3e4
+
+
+
 # 📆 SwiftUICalendar
 
 **SwiftUICalendar** is a beautiful and customizable SwiftUI calendar component.  
@@ -13,7 +17,6 @@ It supports **month view**, **week view**, and a **month/year picker**, making i
 - Month and week display modes
 - Simple date selection with bindings
 - Customizable colors and fonts
-- Month/Year picker with wheel-style selection
 - Lightweight and purely SwiftUI-based
 
 ---
