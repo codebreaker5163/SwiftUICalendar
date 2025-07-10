@@ -24,6 +24,8 @@ public struct SwiftUICalendar: View {
     let dateSelectionColor:Color
     let weekDaysFont:Font
     let dateFont:Font
+    let monthYearPickerFont:Font
+    let confirmBtnFont:Font
     let dateTxtColor:Color
     var backgroundColor:Color = .clear
     let previousMonthDateColor:Color
@@ -43,6 +45,8 @@ public struct SwiftUICalendar: View {
         dateSelectionColor: Color,
         weekDaysFont: Font,
         dateFont: Font,
+        monthYearPickerFont:Font,
+        confirmBtnFont:Font,
         dateTxtColor: Color,
         backgroundColor: Color = .clear,
         previousMonthDateColor: Color,
@@ -57,16 +61,17 @@ public struct SwiftUICalendar: View {
         self.dateSelectionColor = dateSelectionColor
         self.weekDaysFont = weekDaysFont
         self.dateFont = dateFont
+        self.monthYearPickerFont = monthYearPickerFont
+        self.confirmBtnFont = confirmBtnFont
         self.dateTxtColor = dateTxtColor
         self.backgroundColor = backgroundColor
         self.previousMonthDateColor = previousMonthDateColor
         self.monthLabelFont = monthLabelFont
     }
-    
-    var body: some View {
+    public var body: some View {
         VStack {
             if isShowingCalendar{
-                CalendarMonthDisplay(date: $date, tint: primaryColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {isShowingCalendar = false}).padding(.bottom,25)
+                CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {isShowingCalendar = false}).padding(.bottom,25)
                 
                 HStack {
                     ForEach(daysOfWeek.indices,id: \.self){ index in
@@ -105,14 +110,18 @@ public struct SwiftUICalendar: View {
                     }
                 }
             }else{
-                MonthYearDisplay(date: $date, onConfirmation: {}, confirmBtnFont: .custom(brownRegularFont, size: 20), monthFont: .custom(brownRegularFont, size: 24), yearFont: .custom(brownRegularFont, size: 24),backgroundColor:backgroundColor, tint: primaryColor)
+                MonthYearDisplay(date: $date, onConfirmation: {}, confirmBtnFont: confirmBtnFont, monthFont: monthYearPickerFont, yearFont: monthYearPickerFont,backgroundColor:backgroundColor, tint: weekDaysColor)
             }
         }
         .onAppear{
             updateDays()
         }
-        .onChange(of: date,{ updateDays() })
-        .onChange(of: displayMode,{ updateDays() })
+        .onChange(of: date) { _ in
+            updateDays()
+        }
+        .onChange(of: displayMode) { _ in
+            updateDays()
+        }
     }
     
      private func nextTap(){
@@ -166,7 +175,7 @@ private struct CalendarMonthDisplay: View {
     var body: some View {
         HStack{
             Button(action:onPreClick){
-                Image(systemName: chevronLeft).resizable().scaledToFit().frame(width:20,height:20).foregroundColor(tint)
+                Image(systemName: "chevron.left").resizable().scaledToFit().frame(width:20,height:20).foregroundColor(tint)
             }
             Spacer()
             Text(date.monthName+","+String(date.yearName)).font(monthFont).padding(.leading,10).foregroundColor(monthDisplayColor).onTapGesture{
@@ -174,17 +183,12 @@ private struct CalendarMonthDisplay: View {
             }
             Spacer()
             Button(action:onNextClick){
-                Image(systemName: chevronRight).resizable().scaledToFit().frame(width:20,height:20).foregroundColor(tint)
+                Image(systemName: "chevron.right").resizable().scaledToFit().frame(width:20,height:20).foregroundColor(tint)
             }
         }
         .background(Color.clear)
         .frame(maxWidth: .infinity)
     }
-}
-
-
-#Preview {
-    CalendarMonthDisplay(date: Binding.constant(Date.now), tint:primaryColor,monthFont: .custom(brownRegularFont, size: 20),monthDisplayColor: .black, onNextClick: {}, onPreClick: {},onMonthTap: {})
 }
 
 
