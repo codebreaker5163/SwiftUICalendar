@@ -71,7 +71,7 @@ public struct SwiftUICalendar: View {
     public var body: some View {
         VStack {
             if isShowingCalendar{
-                CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {isShowingCalendar = false}).padding(.bottom,25)
+                CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {}).padding(.bottom,25)
                 
                 HStack {
                     ForEach(daysOfWeek.indices,id: \.self){ index in
