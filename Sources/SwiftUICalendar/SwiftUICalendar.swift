@@ -17,6 +17,7 @@ public struct SwiftUICalendar: View {
     @Binding var selectedDate:Date?
     @Binding var displayMode: CalendarDisplayMode
     @State private var days:[Date] = []
+    @State private var isYearSelection:Bool = false
     
     var minYear:Int = 1900
     var maxYear:Int = Calendar.current.component(.year, from: Date())
@@ -28,6 +29,7 @@ public struct SwiftUICalendar: View {
     var backgroundColor:Color = .clear
     let previousMonthDateColor:Color
     private let columns = Array(repeating:GridItem(.flexible()),count:7)
+    private let yearColumns = Array(repeating:GridItem(.flexible()),count:3)
     private let daysOfWeek = Date.capitalizedFirstLettersOfWeekdays
     let monthLabelFont:Font
     
@@ -65,47 +67,65 @@ public struct SwiftUICalendar: View {
     public var body: some View {
         VStack {
             if isShowingCalendar{
-                CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {}).padding(.bottom,25)
-                
-                HStack {
-                    ForEach(daysOfWeek.indices,id: \.self){ index in
-                        Text(daysOfWeek[index])
-                            .foregroundColor(weekDaysColor)
-                            .font(weekDaysFont)
-                            .frame(maxWidth: .infinity)
-                    }
-                }
-                
-                LazyVGrid(columns: columns){
-                    ForEach(days,id:\.self){day in
-                        if day.monthInt != date.monthInt && displayMode != .week {
-                            VStack{
-                                Text(day.formatted(.dateTime.day()))
-                                    .font(dateFont)
-                                    .foregroundColor(previousMonthDateColor)
-                                    .frame(maxWidth: .infinity,minHeight: 30)
-                                HStack{}.frame(width: 24,height: 8).background(Capsule().fill(Color.clear))
-                            }
-                        }else{
-                            ZStack{
-                                if selectedDate == day {
-                                    Circle().frame(width:30,height: 30).foregroundStyle(dateSelectionColor)
-                                
+                if isYearSelection {
+                    LazyVGrid(columns: yearColumns){
+                        ForEach(Array(stride(from: maxYear, through: minYear, by: -1)),id:\.self){ year in
+                             Text("\(year)")
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical,12)
+                                .background(.clear)
+                                .foregroundStyle(dateTxtColor)
+                                .font(dateFont)
+                                .onTapGesture {
+                                    isYearSelection = false
+                                    date = date.updateCurrentDateYear(year: year)
                                 }
-                                Text(day.formatted(.dateTime.day()))
-                                    .font(dateFont)
-                                    .foregroundColor(selectedDate == day ? .white : dateTxtColor)
-                                    .frame(maxWidth: .infinity,minHeight: 30)
-                            }
-                            .onTapGesture {
-                                selectedDate = day
+                        }
+                    }
+                }else{
+                    CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {
+                        isYearSelection = true
+                    }).padding(.bottom,25)
+                    
+                    HStack {
+                        ForEach(daysOfWeek.indices,id: \.self){ index in
+                            Text(daysOfWeek[index])
+                                .foregroundColor(weekDaysColor)
+                                .font(weekDaysFont)
+                                .frame(maxWidth: .infinity)
+                        }
+                    }
+                    
+                    LazyVGrid(columns: columns){
+                        ForEach(days,id:\.self){day in
+                            if day.monthInt != date.monthInt && displayMode != .week {
+                                VStack{
+                                    Text(day.formatted(.dateTime.day()))
+                                        .font(dateFont)
+                                        .foregroundColor(previousMonthDateColor)
+                                        .frame(maxWidth: .infinity,minHeight: 30)
+                                    HStack{}.frame(width: 24,height: 8).background(Capsule().fill(Color.clear))
+                                }
+                            }else{
+                                ZStack{
+                                    if selectedDate == day {
+                                        Circle().frame(width:30,height: 30).foregroundStyle(dateSelectionColor)
+                                        
+                                    }
+                                    Text(day.formatted(.dateTime.day()))
+                                        .font(dateFont)
+                                        .foregroundColor(selectedDate == day ? .white : dateTxtColor)
+                                        .frame(maxWidth: .infinity,minHeight: 30)
+                                }
+                                .onTapGesture {
+                                    selectedDate = day
+                                }
                             }
                         }
                     }
                 }
             }else{
                 EmptyView()
-//                MonthYearDisplay(date: $date, onConfirmation: {}, confirmBtnFont: confirmBtnFont, monthFont: monthYearPickerFont, yearFont: monthYearPickerFont,backgroundColor:backgroundColor, tint: weekDaysColor)
             }
         }
         .onAppear{
@@ -186,72 +206,4 @@ private struct CalendarMonthDisplay: View {
     }
 }
 
-
-private struct MonthYearDisplay: View {
-    @Binding var date:Date
-    @State var selectedMonth:Int = 1
-    @State var selectedYear:Int = 2000
-    let onConfirmation:() -> Void
-    let confirmBtnFont:Font
-    let monthFont:Font
-    let yearFont:Font
-    var backgroundColor:Color = .clear
-    var tint:Color = .black
-    var minYear:Int = 1900
-    var maxYear:Int = Calendar.current.component(.year, from: Date())
-    private let months = Calendar.current.monthSymbols
-    var body: some View {
-        VStack{
-            HStack {
-                // Month picker
-                Picker("Month", selection: $selectedMonth) {
-                    ForEach(1...12, id: \.self) { index in
-                        Text(months[index - 1]).tag(index).foregroundColor(tint)
-                    }
-                }
-                .pickerStyle(.wheel)
-                .frame(maxWidth: .infinity)
-                
-                let years = Array(minYear...maxYear)
-                // Year picker
-                Picker("Year", selection: $selectedYear) {
-                    ForEach(years, id: \.self) { year in
-                        Text(String(year)).tag(year).foregroundStyle(tint)
-                    }
-                }
-                .pickerStyle(.wheel)
-                .frame(maxWidth: .infinity)
-            }
-            .frame(height: 200)
-            .onAppear{
-                selectedMonth = Calendar.current.component(.month, from: date)
-                selectedYear = Calendar.current.component(.year, from: date)
-            }
-            Button(action: {
-                var components = DateComponents()
-                    components.year = selectedYear
-                    components.month = selectedMonth
-                components.day = Calendar.current.component(.day, from: date)
-                date = Calendar.current.date(from: components) ?? Date.now
-                onConfirmation()
-                
-            }){
-                HStack(spacing:0){
-                    Spacer()
-                    Text("Confirm").font(confirmBtnFont).foregroundColor(.white).padding(.leading,10)
-                    Spacer()
-                }
-                
-            }
-            .frame(maxWidth: .infinity)
-            .frame(height: 56)
-            .overlay(
-                RoundedRectangle(cornerRadius: 15, style: .continuous)
-                    .stroke(tint, lineWidth: 1)
-            )
-            .background(tint)
-            .clipShape(RoundedRectangle(cornerRadius: 15))
-        }
-    }
-}
 

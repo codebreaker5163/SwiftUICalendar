@@ -140,6 +140,17 @@ internal extension Date {
         
     }
     
+    func updateCurrentDateYear(year:Int) -> Date{
+        if let updatedDate = Calendar.current.date(
+            bySetting: .year,
+            value: year,
+            of: self
+        ) {
+            return updatedDate
+        }
+        return self
+    }
+    
     static func fromString(_ dateString: String, format: String = "yyyy-MM-dd") -> Date? {
         let formatter = DateFormatter()
         formatter.dateFormat = format
