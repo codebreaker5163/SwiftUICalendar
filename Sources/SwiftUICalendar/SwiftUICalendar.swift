@@ -69,22 +69,23 @@ public struct SwiftUICalendar: View {
             if isShowingCalendar{
                 if isYearSelection {
                     Text("Select Year").font(monthLabelFont).padding(.leading,10).foregroundColor(.black)
-                    ScrollView {
-                        LazyVGrid(columns: yearColumns){
-                            ForEach(Array(stride(from: maxYear, through: minYear, by: -1)),id:\.self){ year in
+                    ScrollView(.vertical) {
+                        LazyVGrid(columns: yearColumns) {
+                            ForEach(Array(stride(from: maxYear, through: minYear, by: -1)), id: \.self) { year in
                                 Text("\(year)")
                                     .frame(maxWidth: .infinity)
-                                    .padding(.vertical,12)
-                                    .background(.clear)
+                                    .padding(.vertical, 12)
                                     .foregroundStyle(dateTxtColor)
                                     .font(dateFont)
+                                    .contentShape(Rectangle())
                                     .onTapGesture {
-                                        isYearSelection = false
                                         date = date.updateCurrentDateYear(year: year)
+                                        isYearSelection = false
                                     }
                             }
                         }
                     }
+                    .frame(height: 500)
                 }else{
                     CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {
                         isYearSelection = true
