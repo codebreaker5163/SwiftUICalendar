@@ -72,7 +72,7 @@ public struct SwiftUICalendar: View {
                     ScrollView(.vertical) {
                         LazyVGrid(columns: yearColumns) {
                             ForEach(Array(stride(from: maxYear, through: minYear, by: -1)), id: \.self) { year in
-                                Text("\(year)")
+                                Text(year.formatted(.number.grouping(.never)))
                                     .frame(maxWidth: .infinity)
                                     .padding(.vertical, 12)
                                     .foregroundStyle(dateTxtColor)
