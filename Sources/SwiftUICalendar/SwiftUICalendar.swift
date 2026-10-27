@@ -79,7 +79,15 @@ public struct SwiftUICalendar: View {
                                     .font(dateFont)
                                     .contentShape(Rectangle())
                                     .onTapGesture {
-                                        date = date.updateCurrentDateYear(year: year)
+                                        let oldDate = date
+                                        let updatedDate = date.updateCurrentDateYear(year: year)
+
+                                        print("Old date:", oldDate)
+                                        print("Selected year:", year)
+                                        print("Updated date:", updatedDate)
+                                        print("Updated year:", Calendar.current.component(.year, from: updatedDate))
+
+                                        date = updatedDate
                                         isYearSelection = false
                                     }
                             }

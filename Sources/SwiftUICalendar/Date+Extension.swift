@@ -140,15 +140,22 @@ internal extension Date {
         
     }
     
-    func updateCurrentDateYear(year:Int) -> Date{
-        if let updatedDate = Calendar.current.date(
-            bySetting: .year,
-            value: year,
-            of: self
-        ) {
-            return updatedDate
+    func updateCurrentDateYear(year: Int) -> Date {
+        let calendar = Calendar.current
+        var components = calendar.dateComponents(
+            [.month, .day, .hour, .minute, .second, .nanosecond],
+            from: self
+        )
+
+        components.year = year
+
+        if components.month == 2,
+           components.day == 29,
+           !calendar.isDateInLeapYear(year: year) {
+            components.day = 28
         }
-        return self
+
+        return calendar.date(from: components) ?? self
     }
     
     static func fromString(_ dateString: String, format: String = "yyyy-MM-dd") -> Date? {
@@ -190,5 +197,17 @@ internal extension Date {
     
     var previousWeek: Date {
         return Calendar.current.date(byAdding: .weekOfYear, value: -1, to: self)!
+    }
+}
+
+private extension Calendar {
+    func isDateInLeapYear(year: Int) -> Bool {
+        guard let date = self.date(
+            from: DateComponents(year: year, month: 2, day: 1)
+        ) else {
+            return false
+        }
+
+        return self.range(of: .day, in: .month, for: date)?.count == 29
     }
 }
