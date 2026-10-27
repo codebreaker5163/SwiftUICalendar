@@ -85,7 +85,7 @@ public struct SwiftUICalendar: View {
                             }
                         }
                     }
-                    .frame(height: 400)
+                    .frame(height: 300)
                 }else{
                     CalendarMonthDisplay(date: $date, tint: weekDaysColor, monthFont: monthLabelFont, monthDisplayColor: .black, onNextClick: nextTap, onPreClick: preTap, onMonthTap: {
                         isYearSelection = true
